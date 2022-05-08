@@ -1,1 +1,2 @@
 # studyPython
+practics pygame

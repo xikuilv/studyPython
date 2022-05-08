@@ -5,11 +5,11 @@
 # @Email  : 824935520@qq.com
 # @File   : {}
 
-import sys
 import pygame
 from ship import Ship
 from game_settings import GameSettings
 import game_functions as gf
+from pygame.sprite import Group
 
 
 def main():
@@ -26,13 +26,17 @@ def main():
     # 创建ship对象
     ship = Ship(screen, game_settings)
 
+    # 创建bullets编组
+    bullets = Group()
+
     while True:
 
-        gf.check_events(ship)
+        gf.check_events(screen, game_settings, ship, bullets)
 
         ship.update_ship()
+        bullets.update()
 
-        gf.update_screen(screen, game_settings, ship)
+        gf.update_screen(screen, game_settings, ship, bullets)
 
 
 if __name__ == '__main__':

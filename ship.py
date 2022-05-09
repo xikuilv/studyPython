@@ -39,3 +39,6 @@ class Ship:
     def ship_blit(self):
         """ 显示飞船 """
         self.screen.blit(self.image, self.rect)
+
+    def ship_center(self):
+        self.center = self.screen_rect.centerx

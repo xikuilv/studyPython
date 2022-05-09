@@ -10,6 +10,8 @@ from ship import Ship
 from game_settings import GameSettings
 import game_functions as gf
 from pygame.sprite import Group
+from game_stats import GameStats
+from button import Button
 
 
 def main():
@@ -25,18 +27,30 @@ def main():
 
     # 创建ship对象
     ship = Ship(screen, game_settings)
-
-    # 创建bullets编组
+    stats = GameStats(screen, game_settings)
+    # 创建 bullets 编组
     bullets = Group()
+    # 创建 aliens 编组
+    aliens = Group()
+
+    button = Button(screen, game_settings, "Play")
+
+    # 创建外星人舰队
+    gf.fleet_aliens(screen, game_settings, ship, aliens)
 
     while True:
 
-        gf.check_events(screen, game_settings, ship, bullets)
+        gf.check_events(screen, game_settings, stats, ship, aliens, bullets, button)
 
-        ship.update_ship()
-        bullets.update()
+        if stats.game_active:
 
-        gf.update_screen(screen, game_settings, ship, bullets)
+            ship.update_ship()
+
+            gf.update_alien(screen, game_settings, stats, aliens, ship, bullets)
+
+            gf.update_bullet(screen, game_settings, ship, aliens, bullets)
+
+        gf.update_screen(screen, game_settings, stats, ship, aliens, bullets, button)
 
 
 if __name__ == '__main__':

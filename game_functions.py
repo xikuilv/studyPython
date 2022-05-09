@@ -11,7 +11,7 @@ from bullet import Bullet
 from alien import Alien
 
 
-def check_keydown_events(event, screen, game_settings, ship, bullets):
+def check_keydown_events(event, screen, game_settings, stats, aliens, ship, bullets):
     """ 按键按下 """
     if event.key == pygame.K_RIGHT:
         ship.ship_moving_right = True
@@ -23,6 +23,9 @@ def check_keydown_events(event, screen, game_settings, ship, bullets):
 
     elif event.key == pygame.K_q:
         sys.exit()
+
+    elif event.key == pygame.K_p:
+        game_start(screen, game_settings, stats, aliens, bullets, ship)
 
 
 def fire_bullet(screen, game_settings, ship, bullets):
@@ -46,7 +49,7 @@ def check_events(screen, game_settings, stats, ship, aliens, bullets, button):
             sys.exit()
 
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, screen, game_settings, ship, bullets)
+            check_keydown_events(event, screen, game_settings, stats, aliens, ship, bullets)
 
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
@@ -59,15 +62,22 @@ def check_events(screen, game_settings, stats, ship, aliens, bullets, button):
 def check_button(screen, game_settings, stats, button, aliens, bullets, ship, mose_x, mose_y):
 
     if button.rect.collidepoint(mose_x, mose_y) and not stats.game_active:
-        pygame.mouse.set_visible(False)
-        stats.reset_stats()
-        stats.game_active = True
+        game_start(screen, game_settings, stats, aliens, bullets, ship)
 
-        aliens.empty()
-        bullets.empty()
 
-        fleet_aliens(screen, game_settings, ship, aliens)
-        ship.ship_center()
+def game_start(screen, game_settings, stats, aliens, bullets, ship):
+    """ 开始游戏 """
+    pygame.mouse.set_visible(False)
+    stats.reset_stats()
+    stats.game_active = True
+
+    game_settings.initialize_dynamic_settings()
+
+    aliens.empty()
+    bullets.empty()
+
+    fleet_aliens(screen, game_settings, ship, aliens)
+    ship.ship_center()
 
 
 def update_screen(screen, game_settings, stats, ship, aliens, bullets, button):
@@ -105,6 +115,8 @@ def check_alien_bullet_collision(screen, game_settings, ship, aliens, bullets):
     if len(aliens) == 0:
         # 创建外星人舰队
         fleet_aliens(screen, game_settings, ship, aliens)
+
+        game_settings.increase_speed()
         # 清空子弹
         bullets.empty()
 

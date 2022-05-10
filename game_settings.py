@@ -26,6 +26,7 @@ class GameSettings:
 
         # 外星人设置
         self.alien_drop_speed = 10
+        self.alien_point = 50
 
         # 以什么速度加速
         self.speedup_scale = 1.1

@@ -12,6 +12,7 @@ import game_functions as gf
 from pygame.sprite import Group
 from game_stats import GameStats
 from button import Button
+from scoreboard import ScoreBoard
 
 
 def main():
@@ -38,6 +39,8 @@ def main():
     # 创建外星人舰队
     gf.fleet_aliens(screen, game_settings, ship, aliens)
 
+    sb = ScoreBoard(screen, game_settings, stats)
+
     while True:
 
         gf.check_events(screen, game_settings, stats, ship, aliens, bullets, button)
@@ -48,9 +51,9 @@ def main():
 
             gf.update_alien(screen, game_settings, stats, aliens, ship, bullets)
 
-            gf.update_bullet(screen, game_settings, ship, aliens, bullets)
+            gf.update_bullet(screen, game_settings, stats, ship, aliens, bullets, sb)
 
-        gf.update_screen(screen, game_settings, stats, ship, aliens, bullets, button)
+        gf.update_screen(screen, game_settings, stats, ship, aliens, bullets, button, sb)
 
 
 if __name__ == '__main__':

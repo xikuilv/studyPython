@@ -80,7 +80,7 @@ def game_start(screen, game_settings, stats, aliens, bullets, ship):
     ship.ship_center()
 
 
-def update_screen(screen, game_settings, stats, ship, aliens, bullets, button):
+def update_screen(screen, game_settings, stats, ship, aliens, bullets, button, sb):
     """ 屏幕刷新 """
     screen.fill(game_settings.screen_bg_color)
 
@@ -94,10 +94,12 @@ def update_screen(screen, game_settings, stats, ship, aliens, bullets, button):
     if not stats.game_active:
         button.button_draw()
 
+    sb.show_font()
+
     pygame.display.flip()
 
 
-def update_bullet(screen, game_settings, ship, aliens, bullets):
+def update_bullet(screen, game_settings, stats, ship, aliens, bullets, sb):
     """ 刷新子弹 """
     bullets.update()
 
@@ -105,20 +107,32 @@ def update_bullet(screen, game_settings, ship, aliens, bullets):
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
-    check_alien_bullet_collision(screen, game_settings, ship, aliens, bullets)
+    check_alien_bullet_collision(screen, game_settings, stats, ship, aliens, bullets, sb)
 
 
-def check_alien_bullet_collision(screen, game_settings, ship, aliens, bullets):
+def check_alien_bullet_collision(screen, game_settings, stats, ship, aliens, bullets, sb):
     """ 响应子弹和外星人相碰撞 """
     collision = pygame.sprite.groupcollide(bullets, aliens, True, True)
 
     if len(aliens) == 0:
+
+        stats.level += 1
+        sb.prep_level()
         # 创建外星人舰队
         fleet_aliens(screen, game_settings, ship, aliens)
 
         game_settings.increase_speed()
         # 清空子弹
         bullets.empty()
+
+    elif collision:
+        for aliens in collision.values():
+            stats.score += game_settings.alien_point*len(aliens)
+            sb.prep_score()
+
+    elif stats.high_score < stats.score:
+        stats.high_score = stats.score
+        sb.prep_high_score()
 
 
 def update_alien(screen, game_settings, stats, aliens, ship, bullets):

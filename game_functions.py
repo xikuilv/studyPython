@@ -11,7 +11,7 @@ from bullet import Bullet
 from alien import Alien
 
 
-def check_keydown_events(event, screen, game_settings, stats, aliens, ship, bullets):
+def check_keydown_events(event, screen, game_settings, stats, aliens, ship, bullets, sb):
     """ 按键按下 """
     if event.key == pygame.K_RIGHT:
         ship.ship_moving_right = True
@@ -25,7 +25,7 @@ def check_keydown_events(event, screen, game_settings, stats, aliens, ship, bull
         sys.exit()
 
     elif event.key == pygame.K_p:
-        game_start(screen, game_settings, stats, aliens, bullets, ship)
+        game_start(screen, game_settings, stats, aliens, bullets, ship, sb)
 
 
 def fire_bullet(screen, game_settings, ship, bullets):
@@ -42,36 +42,41 @@ def check_keyup_events(event, ship):
         ship.ship_moving_left = False
 
 
-def check_events(screen, game_settings, stats, ship, aliens, bullets, button):
+def check_events(screen, game_settings, stats, ship, aliens, bullets, button, sb):
     # 响应鼠标和键盘事件
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
 
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, screen, game_settings, stats, aliens, ship, bullets)
+            check_keydown_events(event, screen, game_settings, stats, aliens, ship, bullets, sb)
 
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mose_x, mose_y = pygame.mouse.get_pos()
-            check_button(screen, game_settings, stats, button, aliens, bullets, ship, mose_x, mose_y)
+            check_button(screen, game_settings, stats, button, aliens, bullets, ship, sb, mose_x, mose_y)
 
 
-def check_button(screen, game_settings, stats, button, aliens, bullets, ship, mose_x, mose_y):
+def check_button(screen, game_settings, stats, button, aliens, bullets, ship, sb, mose_x, mose_y):
 
     if button.rect.collidepoint(mose_x, mose_y) and not stats.game_active:
-        game_start(screen, game_settings, stats, aliens, bullets, ship)
+        game_start(screen, game_settings, stats, aliens, bullets, ship, sb)
 
 
-def game_start(screen, game_settings, stats, aliens, bullets, ship):
+def game_start(screen, game_settings, stats, aliens, bullets, ship, sb):
     """ 开始游戏 """
     pygame.mouse.set_visible(False)
     stats.reset_stats()
     stats.game_active = True
 
     game_settings.initialize_dynamic_settings()
+
+    sb.prep_score()
+    sb.prep_high_score()
+    sb.prep_level()
+    sb.prep_ship()
 
     aliens.empty()
     bullets.empty()
@@ -135,7 +140,7 @@ def check_alien_bullet_collision(screen, game_settings, stats, ship, aliens, bul
         sb.prep_high_score()
 
 
-def update_alien(screen, game_settings, stats, aliens, ship, bullets):
+def update_alien(screen, game_settings, stats, aliens, ship, bullets, sb):
     """ 更新 alien """
     for alien in aliens:
         if alien.alien_edge():
@@ -143,21 +148,23 @@ def update_alien(screen, game_settings, stats, aliens, ship, bullets):
             break
 
     if pygame.sprite.spritecollideany(ship, aliens):
-        ship_hit(screen, game_settings, stats, ship, aliens, bullets)
+        ship_hit(screen, game_settings, stats, ship, aliens, bullets, sb)
 
     for alien in aliens:
         if alien.rect.bottom >= game_settings.screen_height:
-            ship_hit(screen, game_settings, stats, ship, aliens, bullets)
+            ship_hit(screen, game_settings, stats, ship, aliens, bullets, sb)
             break
 
     aliens.update()
 
 
-def ship_hit(screen, game_settings, stats, ship, aliens, bullets):
+def ship_hit(screen, game_settings, stats, ship, aliens, bullets, sb):
 
     if stats.ship_left > 0:
         # ship_left 减一
         stats.ship_left -= 1
+
+        sb.prep_ship()
         # 子弹和外星人均清零
         aliens.empty()
         bullets.empty()

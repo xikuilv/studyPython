@@ -4,6 +4,8 @@
 # @File    : scoreboard.py
 
 import pygame.font
+from pygame.sprite import Group
+from ship import Ship
 
 
 class ScoreBoard:
@@ -20,11 +22,14 @@ class ScoreBoard:
         self.prep_score()
         self.prep_high_score()
         self.prep_level()
+        self.prep_ship()
 
     def show_font(self):
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
+
+        self.grop_ships.draw(self.screen)
 
     def prep_score(self):
         """ 记分 """
@@ -56,6 +61,11 @@ class ScoreBoard:
         self.level_rect.right = self.screen_rect.right - 10
         self.level_rect.top = self.score_rect.bottom + 10
 
-
-
+    def prep_ship(self):
+        self.grop_ships = Group()
+        for ship_num in range(self.stats.ship_left):
+            self.ship = Ship(self.screen, self.game_settings)
+            self.ship.rect.x = self.ship.rect.width * ship_num
+            self.ship.rect.y = 10
+            self.grop_ships.add(self.ship)
 

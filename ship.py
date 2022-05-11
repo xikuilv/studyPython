@@ -5,11 +5,13 @@
 # @Email  : 824935520@qq.com
 # @File   : {}
 import pygame
+from pygame.sprite import Sprite
 
 
-class Ship:
+class Ship(Sprite):
     """ 飞船类 """
     def __init__(self, screen, game_settings):
+        super(Ship, self).__init__()
         self.screen = screen
         self.screen_rect = self.screen.get_rect()
         self.game_settings = game_settings

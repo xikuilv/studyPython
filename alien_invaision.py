@@ -43,13 +43,13 @@ def main():
 
     while True:
 
-        gf.check_events(screen, game_settings, stats, ship, aliens, bullets, button)
+        gf.check_events(screen, game_settings, stats, ship, aliens, bullets, button, sb)
 
         if stats.game_active:
 
             ship.update_ship()
 
-            gf.update_alien(screen, game_settings, stats, aliens, ship, bullets)
+            gf.update_alien(screen, game_settings, stats, aliens, ship, bullets, sb)
 
             gf.update_bullet(screen, game_settings, stats, ship, aliens, bullets, sb)
 
